@@ -4,10 +4,15 @@ const cheerio = require("cheerio");
 
 const router = express.Router();
 
+router.get('/', (req, res) => {
+    res.json({
+        "data": "Welcome to bookmark api!"
+    });
+})
+
 router.post('/', async (req, res) => {
 
     let url = req.body.url;
-
     const response = await axios
         .get(url)
         .then(async (response) => {
