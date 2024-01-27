@@ -11,8 +11,7 @@ router.get('/', (req, res) => {
 })
 
 router.post('/', async (req, res) => {
-
-    let url = req.body.url;
+    const { url } = req.body;
     const response = await axios
         .get(url)
         .then(async (response) => {
