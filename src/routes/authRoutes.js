@@ -1,7 +1,7 @@
 
 const express = require('express');
 const router = express.Router();
-const { registerUser, loginUser, logoutUser } = require('../controllers/authController');
+const { registerUser, loginUser, logoutUser, getProfile, updateProfile } = require('../controllers/authController');
 
 router.get('/', (req, res) => {
     res.json({
@@ -18,6 +18,9 @@ router.post('/login', loginUser)
 
 //User Logout
 router.post('/logout', logoutUser)
+
+//User Profile
+router.route('/profile').get(getProfile).put(updateProfile)
 
 
 

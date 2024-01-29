@@ -31,7 +31,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 
 
 // @desc    Get User Profile
-// route    POST /api/v1/auth/profile
+// route    GET /api/v1/auth/profile
 // @access  Private   
 const getProfile = asyncHandler(async (req, res) => {
     res.status(200).json({
@@ -39,5 +39,15 @@ const getProfile = asyncHandler(async (req, res) => {
     })
 })
 
+// @desc    Update User Profile
+// route    PUT /api/v1/auth/profile
+// @access  Private   
+const updateProfile = asyncHandler(async (req, res) => {
+    res.status(200).json({
+        "message": "Update User Profile"
+    })
+})
 
-module.exports = { registerUser, loginUser, logoutUser, getProfile }
+
+
+module.exports = { registerUser, loginUser, logoutUser, getProfile, updateProfile }
