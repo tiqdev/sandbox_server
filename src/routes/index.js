@@ -2,10 +2,10 @@ const express = require('express');
 const router = express.Router();
 
 //For bookmark application
-const bookmark = require('./bookmark');
+const bookmark = require('./bookmarkRoutes.js');
 
 //For authentication samples
-const authentication = require("./auth_sample");
+const authentication = require("./authRoutes.js");
 
 
 router.get('/', (req, res) => {
