@@ -3,7 +3,7 @@ const cors = require('cors');
 
 require('dotenv').config();
 
-const api = require("./api");
+const routes = require("./routes");
 const app = express();
 
 app.use(cors());
@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
     });
 });
 
-app.use('/api/v1', api);
+app.use('/api/v1', routes);
 
 
 module.exports = app;
