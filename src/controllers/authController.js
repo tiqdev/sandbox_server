@@ -36,22 +36,26 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 
-
 // @desc    Auth user set token
 // route    POST /api/v1/auth/login
 // @access  Public
 const authUser = asyncHandler(async (req, res) => {
-    res.status(200).json({
-        "message": "Login User"
-    })
-})
 
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
 
+    if (user && (await user.matchPassword(password))) {
+        generateToken(res, user._id)
+        res.status(201).json({
+            _id: user._id,
+            name: user.name,
+            email: user.email
+        });
+    } else {
+        res.status(400)
+        throw new Error("Invalid email or password")
+    }
 
-// @desc    User Login
-// route    POST /api/v1/auth/login
-// @access  Public
-const loginUser = asyncHandler(async (req, res) => {
     res.status(200).json({
         "message": "Login User"
     })
@@ -62,8 +66,14 @@ const loginUser = asyncHandler(async (req, res) => {
 // route    POST /api/v1/auth/logout
 // @access  Public
 const logoutUser = asyncHandler(async (req, res) => {
+
+    res.cookie("token", "", {
+        httpOnly: true,
+        expires: new Date(0)
+    })
+
     res.status(200).json({
-        "message": "Logout User"
+        "message": "User Logged Out"
     })
 })
 
@@ -72,9 +82,14 @@ const logoutUser = asyncHandler(async (req, res) => {
 // route    GET /api/v1/auth/profile
 // @access  Private   
 const getProfile = asyncHandler(async (req, res) => {
-    res.status(200).json({
-        "message": "User Profile"
-    })
+
+    const user = {
+        _id: req.user._id,
+        name: req.user.name,
+        email: req.user.email
+    }
+
+    res.status(200).json(user)
 })
 
 // @desc    Update User Profile
@@ -88,4 +103,4 @@ const updateProfile = asyncHandler(async (req, res) => {
 
 
 
-module.exports = { registerUser, loginUser, logoutUser, getProfile, updateProfile, authUser }
+module.exports = { registerUser, logoutUser, getProfile, updateProfile, authUser }

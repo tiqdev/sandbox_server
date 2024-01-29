@@ -1,7 +1,8 @@
 
 const express = require('express');
 const router = express.Router();
-const { registerUser, loginUser, logoutUser, getProfile, updateProfile } = require('../controllers/authController');
+const { registerUser, logoutUser, getProfile, updateProfile, authUser } = require('../controllers/authController');
+const { protect } = require('../middlewares/authMiddleware');
 
 router.get('/', (req, res) => {
     res.json({
@@ -14,13 +15,13 @@ router.get('/', (req, res) => {
 router.post('/register', registerUser)
 
 //User Login
-router.post('/login', loginUser)
+router.post('/login', authUser)
 
 //User Logout
 router.post('/logout', logoutUser)
 
 //User Profile
-router.route('/profile').get(getProfile).put(updateProfile)
+router.route('/profile').get(protect, getProfile).put(protect, updateProfile)
 
 
 

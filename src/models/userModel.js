@@ -34,6 +34,11 @@ userSchema.pre('save', async function (next) {
     }
 })
 
+//control if password is matched
+userSchema.methods.matchPassword = async function (enteredPassword) {
+    return await bycrypt.compare(enteredPassword, this.password);
+}
+
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;
