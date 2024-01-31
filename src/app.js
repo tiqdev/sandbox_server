@@ -19,6 +19,16 @@ app.use(cookieParser());
 app.get('/', (req, res) => {
     res.json({
         message: 'Welcome to the Sandbox API',
+        apis: [
+            "/api/v1/auth",
+            "/api/v1/bookmark",
+        ],
+        createdBy: "Tarık KAYA",
+        github: "https://github.com/tiqdev",
+        medium: "https://medium.com/@tiqdev",
+        linkedin: "https://www.linkedin.com/in/tiqdev/",
+        website: "https://tiqdev.com",
+        bento: "https://bento.me/tiqdev"
     });
 });
 
