@@ -14,6 +14,8 @@ const generateToken = (res, userId) => {
         sameSite: 'strict', //for csrf attack
         maxAge: 30 * 24 * 60 * 60 * 1000 //30 days
     })
+
+    return token;
 }
 
 module.exports = generateToken;
