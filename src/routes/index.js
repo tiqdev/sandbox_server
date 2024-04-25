@@ -7,6 +7,9 @@ const bookmark = require('./bookmarkRoutes.js');
 //For authentication samples
 const authentication = require("./authRoutes.js");
 
+//For image generation
+const image = require("./imageRoutes.js");
+
 
 router.get('/', (req, res) => {
     res.json({
@@ -18,4 +21,5 @@ router.get('/', (req, res) => {
 
 router.use('/bookmark', bookmark);
 router.use("/auth", authentication);
+router.use("/image", image);
 module.exports = router;

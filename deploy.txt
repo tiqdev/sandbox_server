@@ -1,0 +1,6 @@
+deploy etmek için vercel cli yüklü olmalı
+// npm install -g vercel
+
+// vercel login
+giriş yaptıktan sonra deploy etmek için
+// vercel --prod
