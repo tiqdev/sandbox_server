@@ -9,8 +9,7 @@ router.get('/', (req, res) => {
 })
 
 
-router.get('/create', async (req, res) => {
-
+router.get('/createAya', async (req, res) => {
     try {
         const imageBuffer = await createImage();
         console.log('Resim oluşturuldu', imageBuffer);

@@ -1,13 +1,12 @@
 const Jimp = require('jimp');
+const path = require('path');
 
 async function createImage() {
 
     try {
-        // Özel fontu yükle (Jimp'te CSS bağlantısını kullanarak)
-        const customFont = await Jimp.loadFont(Jimp.FONT_SANS_32_BLACK);
 
         // Görseli yükleyin (lokal dosyadan veya URL üzerinden)
-        const imageUrl = './public/images/back.jpg'; // veya bir URL
+        const imageUrl = path.join(__dirname, "..", "..", 'public', 'images', 'back.jpg');
         const image = await Jimp.read(imageUrl);
 
         image.resize(1500, 600);
@@ -20,13 +19,6 @@ async function createImage() {
                 opacityDest: 1,
                 opacitySource: 1
             });
-
-        await canvas.print(
-            customFont, // Kullanılacak özel font
-            50, // X konumu
-            50, // Y konumu
-            "Merhaba, Dünya!" // Metin
-        );
 
 
         const buffer = await imageToBuffer(canvas);
