@@ -1,29 +1,29 @@
 const express = require('express');
-const { generateImage } = require('../controllers/imageController');
-
+const { createImage } = require("../controllers/imageController");
 const router = express.Router();
 
-router.get('/', async (req, res) => {
-    try {
-        // Base64 resmi oluştur
-        const base64 = await generateImage(400, 400);
-        console.log(base64);
-
-        // Base64 resmini HTML içinde görüntüle
-        res.send(`<img src="${base64}" alt="Oluşturulan Resim">`);
-    } catch (error) {
-        console.error('Hata oluştu:', error);
-        res.status(500).send('İşlem sırasında bir hata oluştu');
-    }
+router.get('/', (req, res) => {
+    res.json({
+        "data": "Welcome to image generation api!"
+    });
 })
 
-router.post('/', async (req, res) => {
-    const { url } = req.body;
-    let base64Image = await generateImage(400, 400);
-    res.json({
-        "data": base64Image
-    });
-});
+
+router.get('/create', async (req, res) => {
+
+    try {
+        const imageBuffer = await createImage();
+        console.log('Resim oluşturuldu', imageBuffer);
+        // Resmi yanıt olarak gönder
+        res.set('Content-Type', 'image/png');
+        res.send(imageBuffer);
+    } catch (error) {
+        console.error('Hata oluştu:', error);
+        res.status(500).send('Bir hata oluştu');
+    }
+}
+);
+
 
 
 

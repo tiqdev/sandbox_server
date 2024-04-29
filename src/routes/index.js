@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
-//For bookmark application
-const bookmark = require('./bookmarkRoutes.js');
+//For metadata application
+const metadata = require('./metadataRoutes.js');
 
 //For authentication samples
 const authentication = require("./authRoutes.js");
@@ -19,7 +19,7 @@ router.get('/', (req, res) => {
 
 
 
-router.use('/bookmark', bookmark);
+router.use('/metadata', metadata);
 router.use("/auth", authentication);
 router.use("/image", image);
 module.exports = router;

@@ -21,7 +21,8 @@ app.get('/', (req, res) => {
         message: 'Welcome to the Sandbox API',
         apis: [
             "/api/v1/auth",
-            "/api/v1/bookmark",
+            "/api/v1/metadata",
+            "/api/v1/image",
         ],
         createdBy: "Tarık KAYA",
         github: "https://github.com/tiqdev",

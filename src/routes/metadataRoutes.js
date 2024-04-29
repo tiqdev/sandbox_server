@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.get('/', (req, res) => {
     res.json({
-        "data": "Welcome to bookmark api!"
+        "data": "Welcome to metadata api!"
     });
 })
 
