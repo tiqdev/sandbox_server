@@ -15,8 +15,12 @@ router.post('/', async (req, res) => {
     const response = await axios
         .get(url)
         .then(async (response) => {
+
             // HTML içeriğini alın
             const htmlContent = response.data;
+            const protocol = response.request.protocol;
+            const host = response.request.host;
+
             let metatags;
             // Cheerio kullanarak HTML içeriğini parse edin
             const $ = cheerio.load(htmlContent);
@@ -32,9 +36,16 @@ router.post('/', async (req, res) => {
             const image =
                 $('meta[property="og:image"]').attr("content") ||
                 $('meta[property="og:image:url"]').attr("content");
-            const icon =
+            let icon =
                 $('link[rel="icon"]').attr("href") ||
                 $('link[rel="shortcut icon"]').attr("href");
+
+            if (icon) {
+                if (!icon.includes("http")) {
+                    icon = protocol + "//" + host + icon;
+                }
+            }
+
             const keywords =
                 $('meta[property="og:keywords"]').attr("content") ||
                 $('meta[name="keywords"]').attr("content");
@@ -52,6 +63,7 @@ router.post('/', async (req, res) => {
             return metatags;
         })
         .catch((error) => {
+            console.error("Error fetching the page: ", error);
             return null;
         });
 

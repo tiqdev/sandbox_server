@@ -8,7 +8,7 @@ const metadata = require('./metadataRoutes.js');
 const authentication = require("./authRoutes.js");
 
 //For image generation
-const image = require("./imageRoutes.js");
+const canvas = require("./canvasRouter.js");
 
 
 router.get('/', (req, res) => {
@@ -21,5 +21,5 @@ router.get('/', (req, res) => {
 
 router.use('/metadata', metadata);
 router.use("/auth", authentication);
-router.use("/image", image);
+router.use("/canvas", canvas);
 module.exports = router;

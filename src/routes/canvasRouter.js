@@ -1,5 +1,5 @@
 const express = require('express');
-const { createImage } = require("../controllers/imageController");
+const { createAya } = require("../controllers/canvasController");
 const router = express.Router();
 
 router.get('/', (req, res) => {
@@ -10,8 +10,16 @@ router.get('/', (req, res) => {
 
 
 router.get('/createAya', async (req, res) => {
+
+    const { text } = req.query;
+    let _text = text;
+    if (!text) {
+        _text = "";
+    }
+    console.log('Gelen metin:', _text);
+
     try {
-        const imageBuffer = await createImage();
+        const imageBuffer = await createAya(_text);
         console.log('Resim oluşturuldu', imageBuffer);
         // Resmi yanıt olarak gönder
         res.set('Content-Type', 'image/png');
