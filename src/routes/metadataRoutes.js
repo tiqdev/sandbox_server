@@ -10,11 +10,16 @@ router.get('/', (req, res) => {
     });
 })
 
+const headers = {
+    "Content-Type": "text/html; charset=utf-8",
+};
+
 router.post('/', async (req, res) => {
     const { url } = req.body;
     const response = await axios
-        .get(url)
+        .get(url, headers)
         .then(async (response) => {
+            console.log(response, "-----> response")
 
             // HTML içeriğini alın
             const htmlContent = response.data;
@@ -33,14 +38,36 @@ router.post('/', async (req, res) => {
                 $('meta[name="description"]').attr("content");
             const url = $('meta[property="og:url"]').attr("content");
             const site_name = $('meta[property="og:site_name"]').attr("content");
-            const image =
-                $('meta[property="og:image"]').attr("content") ||
-                $('meta[property="og:image:url"]').attr("content");
+
+            let image;
+            if (title?.toLocaleLowerCase().includes("amazon.com")) {
+                image = $('img[id="landingImage"]').attr("src")
+            } else {
+                if ($('meta[property="og:image:secure_url"]').attr("content") === undefined) {
+                    image = $('meta[property="og:image"]').attr("content") ||
+                        $('meta[property="og:image:url"]').attr("content");
+                } else {
+                    image = $('meta[property="og:image:secure_url"]').attr("content");
+                }
+
+                if (image) {
+                    if (image.startsWith("//")) {
+                        image = "https:" + image;
+                    }
+                    if (!image.includes("http")) {
+                        image = protocol + "//" + host + image;
+                    }
+                }
+            }
+
             let icon =
                 $('link[rel="icon"]').attr("href") ||
                 $('link[rel="shortcut icon"]').attr("href");
 
             if (icon) {
+                if (icon.startsWith("//")) {
+                    icon = "https:" + icon
+                }
                 if (!icon.includes("http")) {
                     icon = protocol + "//" + host + icon;
                 }
@@ -63,17 +90,19 @@ router.post('/', async (req, res) => {
             return metatags;
         })
         .catch((error) => {
-            console.error("Error fetching the page: ", error);
+            console.log(error.message, "error")
+            console.error("Error fetching the page: ", error.message);
             return null;
         });
 
-    const _data = await response;
+
     if (response === null) {
+        console.log(response, "response")
         res.json({
             "error": "you have to give url!"
         })
     }
-    res.json(_data);
+    res.json(response);
 });
 
 
