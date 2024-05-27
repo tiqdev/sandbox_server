@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler")
 const User = require("../models/userModel")
 const generateToken = require("../utils/generateToken")
+const jwt = require('jsonwebtoken')
 
 // @desc    Register a new user
 // route    POST /api/v1/auth/register
@@ -56,6 +57,12 @@ const authUser = asyncHandler(async (req, res) => {
 
     if (user && (await user.matchPassword(password))) {
         let token = generateToken(user._id)
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: true, //for https
+            sameSite: 'None', //for csrf attack
+            maxAge: 5 * 60 * 1000  //5 minutes
+        })
         res.status(200).json({
             _id: user._id,
             name: user.name,
@@ -63,12 +70,7 @@ const authUser = asyncHandler(async (req, res) => {
             //token
         });
 
-        res.cookie('token', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV !== 'development', //for https
-            sameSite: 'none', //for csrf attack
-            maxAge: 5 * 60 * 1000  //5 minutes
-        })
+
     } else {
         res.status(400)
         throw new Error("Invalid email or password")
@@ -81,14 +83,37 @@ const authUser = asyncHandler(async (req, res) => {
 // @access  Public
 const logoutUser = asyncHandler(async (req, res) => {
 
-    res.cookie("token", "", {
-        httpOnly: true,
-        expires: new Date(0)
-    })
+    console.log(req.cookies.token, "cookies")
+    const token = req.cookies.token;
 
-    res.status(200).json({
-        "message": "User Logged Out"
-    })
+    if (!token) {
+        res.status(401)
+        throw new Error("Not authorized, no token")
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET)
+        console.log(decoded, "decoded")
+
+        res.clearCookie('token',
+            {
+                httpOnly: true,
+                secure: true, //for https
+                sameSite: 'None', //for csrf attack
+                path: '/'
+            }
+        );
+
+        res.status(200).json({
+            "userId": decoded.userId,
+            "message": "User Logged Out"
+        })
+    } catch (err) {
+        console.log(err, "err")
+        res.status(401)
+        throw new Error("Not authorized, token failed")
+    }
+
 })
 
 
@@ -105,11 +130,9 @@ const getProfile = asyncHandler(async (req, res) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET)
-        res.status(200).json({
-            _id: decoded.id,
-            name: decoded.name,
-            email: decoded.email
-        })
+        // get user by userId
+        const user = await User.findById(decoded.userId).select('-password')
+        res.status(200).json(user)
     } catch (err) {
         res.status(401)
         throw new Error("Not authorized, token failed")

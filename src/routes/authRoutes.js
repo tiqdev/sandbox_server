@@ -21,7 +21,9 @@ router.post('/login', authUser)
 router.post('/logout', logoutUser)
 
 //User Profile
-router.route('/profile').get(protect, getProfile).put(protect, updateProfile)
+router.route('/profile', protect)
+    .get(getProfile)
+    .put(updateProfile)
 
 
 
