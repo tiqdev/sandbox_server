@@ -23,13 +23,22 @@ const registerUser = asyncHandler(async (req, res) => {
     })
 
     if (user) {
-        let token = generateToken(res, user._id)
-        res.status(201).json({
+        let token = generateToken(user._id)
+
+        res.status(200).json({
             _id: user._id,
             name: user.name,
             email: user.email,
-            token
+            //token
         });
+
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV !== 'development', //for https
+            sameSite: 'none', //for csrf attack
+            maxAge: 5 * 60 * 1000  //5 minutes
+        })
+
     } else {
         res.status(400)
         throw new Error("Invalid user data")
@@ -46,21 +55,24 @@ const authUser = asyncHandler(async (req, res) => {
     const user = await User.findOne({ email });
 
     if (user && (await user.matchPassword(password))) {
-        let token = generateToken(res, user._id)
-        res.status(201).json({
+        let token = generateToken(user._id)
+        res.status(200).json({
             _id: user._id,
             name: user.name,
             email: user.email,
-            token
+            //token
         });
+
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV !== 'development', //for https
+            sameSite: 'none', //for csrf attack
+            maxAge: 5 * 60 * 1000  //5 minutes
+        })
     } else {
         res.status(400)
         throw new Error("Invalid email or password")
     }
-
-    res.status(200).json({
-        "message": "Login User"
-    })
 })
 
 
@@ -84,12 +96,24 @@ const logoutUser = asyncHandler(async (req, res) => {
 // route    GET /api/v1/auth/profile
 // @access  Private   
 const getProfile = asyncHandler(async (req, res) => {
-    const user = {
-        _id: req.user._id,
-        name: req.user.name,
-        email: req.user.email
+    const token = req.cookies.token;
+
+    if (!token) {
+        res.status(401)
+        throw new Error("Not authorized, no token")
     }
-    res.status(200).json(user)
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET)
+        res.status(200).json({
+            _id: decoded.id,
+            name: decoded.name,
+            email: decoded.email
+        })
+    } catch (err) {
+        res.status(401)
+        throw new Error("Not authorized, token failed")
+    }
 })
 
 
